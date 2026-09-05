@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+}
+
+html, body { height: 100%; }
+
+body {
+  @apply bg-slate-100 text-slate-800 antialiased dark:bg-slate-950 dark:text-slate-100;
+  font-feature-settings: "cv05", "ss01";
+}
+
+/* Le contenu défile dans <main> ; on verrouille le fond quand une fenêtre est ouverte. */
+body.modal-open { overflow: hidden; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { @apply rounded-full bg-slate-300 dark:bg-slate-700; }
+
+@layer components {
+  .th {
+    @apply whitespace-nowrap px-3 py-2.5 text-left text-[10.5px] font-semibold uppercase tracking-[0.09em] text-slate-500 dark:text-slate-400;
+  }
+  .td {
+    @apply px-3 py-3 text-sm text-slate-700 dark:text-slate-300;
+  }
+  .row-hover {
+    @apply cursor-pointer transition-colors hover:bg-brand-50/60 dark:hover:bg-slate-800/70;
+  }
+  /* Micro-libellé institutionnel : sections, en-têtes de cartes. */
+  .label {
+    @apply text-[10.5px] font-semibold uppercase tracking-[0.11em] text-slate-500 dark:text-slate-400;
+  }
+  .page-title {
+    @apply font-serif text-[1.75rem] font-semibold leading-tight tracking-[-0.01em] text-navy-900 dark:text-slate-50;
+  }
+  .card-title {
+    @apply text-[13px] font-semibold text-navy-900 dark:text-slate-100;
+  }
+}
+
+/* Chiffres alignés dans les tableaux et les compteurs. */
+table, .tabular { font-variant-numeric: tabular-nums; }
+
+/* Apparition de page : opacité seule.
+   Un `transform` ici créerait un bloc conteneur qui emprisonnerait les
+   fenêtres modales en position fixed dans la zone de contenu. */
+.fade-in { animation: fadeIn .2s ease both; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in { animation: none; }
+  * { transition-duration: 0.01ms !important; }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Impression : ne garder que le contenu utile sur place              */
+/* ------------------------------------------------------------------ */
+@media print {
+  aside, header, nav, .no-print { display: none !important; }
+  main { padding: 0 !important; }
+  body { background: #fff !important; }
+  .card-print { break-inside: avoid; border: 1px solid #d9dee3 !important; box-shadow: none !important; }
+  a[href]::after { content: ""; }
+}
