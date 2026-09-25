@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+}
+
+html, body { height: 100%; }
+
+/* Les contrôles natifs — listes déroulantes, sélecteurs de date, barres de
+   défilement — sont dessinés par le système, pas par la feuille de style.
+   Sans cette déclaration ils restaient clairs au milieu d'une interface
+   sombre, avec le dégradé gris caractéristique des `select` de macOS. */
+:root { color-scheme: light; }
+.dark { color-scheme: dark; }
+
+body {
+  @apply bg-slate-100 text-slate-800 antialiased dark:bg-slate-950 dark:text-slate-100;
+  font-feature-settings: "cv05", "ss01";
+}
+
+/* Le contenu défile dans <main> ; on verrouille le fond quand une fenêtre est ouverte. */
+body.modal-open { overflow: hidden; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { @apply rounded-full bg-slate-300 dark:bg-slate-700; }
+
+@layer components {
+  .th {
+    @apply whitespace-nowrap px-3 py-2.5 text-left text-[10.5px] font-semibold uppercase tracking-[0.09em] text-slate-500 dark:text-slate-400;
+  }
+  .td {
+    @apply px-3 py-3 text-sm text-slate-700 dark:text-slate-300;
+  }
+  .row-hover {
+    @apply cursor-pointer transition-colors hover:bg-brand-50/60 dark:hover:bg-slate-800/70;
+  }
+  /* Micro-libellé institutionnel : sections, en-têtes de cartes. */
+  .label {
+    @apply text-[10.5px] font-semibold uppercase tracking-[0.11em] text-slate-500 dark:text-slate-400;
+  }
+  .page-title {
+    @apply font-serif text-[1.75rem] font-semibold leading-tight tracking-[-0.01em] text-navy-900 dark:text-slate-50;
+  }
+  .card-title {
+    @apply text-[13px] font-semibold text-navy-900 dark:text-slate-100;
+  }
+}
+
+/* Chiffres alignés dans les tableaux et les compteurs. */
+table, .tabular { font-variant-numeric: tabular-nums; }
+
+/* Apparition de page : opacité seule.
+   Un `transform` ici créerait un bloc conteneur qui emprisonnerait les
+   fenêtres modales en position fixed dans la zone de contenu. */
+.fade-in { animation: fadeIn .2s ease both; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in { animation: none; }
+  * { transition-duration: 0.01ms !important; }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Entonnoir de prospection (diagramme de Sankey)                     */
+/* ------------------------------------------------------------------ */
+/* Les couleurs reprennent celles des pastilles de statut pour qu'un
+   nœud du diagramme et une puce dans la liste se lisent pareil. Elles
+   passent par des variables CSS parce qu'un dégradé SVG a besoin d'une
+   couleur résolue : une classe Tailwind `dark:` ne s'applique pas à un
+   attribut `stop-color`. */
+.sankey {
+  --sk-structure: #48545d;   /* navy-600 : nœuds d'agrégation */
+  --sk-ident:     #98a1aa;   /* slate-400 */
+  --sk-contacter: #0ea5e9;   /* sky-500 */
+  --sk-attente:   #f97316;   /* orange-500 */
+  --sk-relance:   #fbbf24;   /* amber-400 */
+  --sk-relfaite:  #eab308;   /* yellow-500 */
+  --sk-positif:   #10b981;   /* emerald-500 */
+  --sk-discussion:#14b8a6;   /* teal-500 */
+  --sk-visite:    #16a34a;   /* green-600 */
+  --sk-refus:     #ef4444;   /* red-500 */
+  --sk-abandon:   #64748b;
+  --sk-opacite:   .34;
+}
+.dark .sankey {
+  --sk-structure: #7d8b95;   /* navy-400 : assez clair pour se voir, assez sourd
+                                pour ne pas écraser les statuts colorés */
+  --sk-ident:     #98a1aa;
+  --sk-contacter: #38bdf8;
+  --sk-attente:   #fb923c;
+  --sk-relance:   #fcd34d;
+  --sk-relfaite:  #facc15;
+  --sk-positif:   #34d399;
+  --sk-discussion:#2dd4bf;
+  --sk-visite:    #22c55e;
+  --sk-refus:     #f87171;
+  --sk-abandon:   #94a3b8;
+  --sk-opacite:   .42;
+}
+
+.sankey .sk-nom { @apply fill-navy-900 text-[12.5px] font-semibold dark:fill-slate-100; }
+.sankey .sk-val { @apply fill-slate-600 text-[12px] dark:fill-slate-300; }
+.sankey .sk-sec { @apply fill-slate-400 text-[10.5px] font-normal dark:fill-slate-500; }
+
+/* Le survol d'un ruban estompe les autres : sans cela, un parcours se perd
+   dans la masse dès qu'il y a plus de quatre rubans. */
+.sankey .sk-ruban { transition: opacity .13s; }
+.sankey .sk-rubans:hover .sk-ruban { opacity: .16; }
+.sankey .sk-ruban:hover { opacity: .95; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sankey .sk-ruban { transition: none; }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Impression : ne garder que le contenu utile sur place              */
+/* ------------------------------------------------------------------ */
+@media print {
+  aside, header, nav, .no-print { display: none !important; }
+  main { padding: 0 !important; }
+  body { background: #fff !important; }
+  .card-print { break-inside: avoid; border: 1px solid #d9dee3 !important; box-shadow: none !important; }
+  a[href]::after { content: ""; }
+}
